@@ -11,6 +11,22 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] === 'user') {
 
 // Veritabanı bağlantısı (İleride istatistikleri çekmek için kullanacağız)
 require_once '../config/db.php';
+// İSTATİSTİK SORGULARI
+try {
+    // 1. Toplam Yazı Sayısı
+    $total_posts = $db->query("SELECT COUNT(*) FROM posts")->fetchColumn();
+
+    // 2. Toplam Kategori Sayısı
+    $total_categories = $db->query("SELECT COUNT(*) FROM categories")->fetchColumn();
+
+    // 3. Onay Bekleyen Yorum Sayısı (status = 'pending')
+    $pending_comments = $db->query("SELECT COUNT(*) FROM comments WHERE status = 'pending'")->fetchColumn();
+} catch (PDOException $e) {
+    // Hata durumunda sistemin çökmemesi için varsayılan 0 değerlerini atıyoruz
+    $total_posts = 0;
+    $total_categories = 0;
+    $pending_comments = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -65,19 +81,21 @@ require_once '../config/db.php';
     </div>
 
     <div class="stats-container">
-        <div class="card">
-            <h4>Toplam Yazı</h4>
-            <p>0</p>
-        </div>
-        <div class="card categories">
-            <h4>Kategoriler</h4>
-            <p>0</p>
-        </div>
-        <div class="card comments">
-            <h4>Onay Bekleyen Yorum</h4>
-            <p>0</p>
-        </div>
+    <div class="card">
+        <h4>Toplam Yazı</h4>
+        <p><?php echo $total_posts; ?></p>
     </div>
+    <div class="card categories">
+        <h4>Kategoriler</h4>
+        <p><?php echo $total_categories; ?></p>
+    </div>
+    <div class="card comments">
+        <h4>Onay Bekleyen Yorum</h4>
+        <p style="<?php echo $pending_comments > 0 ? 'color: #e74c3c;' : ''; ?>">
+            <?php echo $pending_comments; ?>
+        </p>
+    </div>
+</div>
 
     <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
         <h3>Sistem Durumu</h3>
