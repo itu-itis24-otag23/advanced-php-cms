@@ -1,0 +1,6 @@
+# Veritabanı bağlantı bilgilerini gizliyoruz
+config/db.php
+
+# Yüklenen test görsellerini gizliyoruz (sadece klasör yapısı kalacak)
+uploads/*
+!uploads/.gitkeep
